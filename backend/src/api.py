@@ -17,7 +17,7 @@ CORS(app)
 !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
 !! Running this funciton will add one
 '''
-# db_drop_and_create_all()
+db_drop_and_create_all()
 
 # CORS Headers
 @app.after_request
@@ -261,3 +261,8 @@ def auth_error(error):
         'error': error.status_code,
         'message': error.error['description']
     }), error.status_code
+
+# if __name__ == '__main__':
+#     app.reload = True
+#     app.debug = True
+#     app.run(host='0.0.0.0')

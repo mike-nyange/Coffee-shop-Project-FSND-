@@ -21,11 +21,11 @@ CORS(app)
 #db_drop_and_create_all()
 
 # CORS Headers
-@app.after_request
-def after_request(response):
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,true')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-    return 
+# @app.after_request
+# def after_request(response):
+#     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,true')
+#     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+#     return 
 
 # ROUTES
 '''
@@ -78,7 +78,7 @@ def get_drinks_detail(payload):
         or appropriate status code indicating reason for failure
 '''
 
-app.route("/drinks", methods=["POST"])
+app.route("/drinks", methods=['POST'])
 requires_auth('post:drinks')
 def post_drinks(payload):
     if request.method == "POST":
@@ -103,7 +103,7 @@ def post_drinks(payload):
             return jsonify({
                 'success': True,
                 'drinks': createdDrink
-            }), 200
+            })
             
         except:
             abort(422)
@@ -262,7 +262,3 @@ def auth_error(error):
         'error': error.status_code,
         'message': error.error['description']
     }), error.status_code
-# if __name__ == '__main__':
-#     app.reload = True
-#     app.debug = True
-#     app.run(host='0.0.0.0')

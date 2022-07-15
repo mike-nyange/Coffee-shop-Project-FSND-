@@ -31,35 +31,33 @@ class AuthError(Exception):
     return the token part of the header
 '''
 def get_token_auth_header():
-    #obtain access token from auth header
-    auth = request.headers.get('Authorization', None)
-    if not auth:
-        raise AuthError({
+    auth_header = request.headers.get('Authorization', None)
+    if not auth_header:
+       raise AuthError({
             'code': 'authorization_header_missing',
-            'description': 'You are expected to have an authorization header'
+            'description': 'Authorization header is expected.'
         }, 401)
-        
-    parts = auth.split()
-    
-    if parts[0].lower() != 'bearer':
+
+    headers_parts = auth_header.split(' ')
+
+    if headers_parts[0].lower() != 'bearer':
         raise AuthError({
             'code': 'invalid_header',
             'description': 'Authorization header must start with "Bearer".'
         }, 401)
-    
-    elif len(parts) == 1:
+    elif len(headers_parts) == 1:
         raise AuthError({
             'code': 'invalid_header',
             'description': 'Token not found.'
-        }, 401)
-        
-    elif len(parts) > 2:
+        })
+
+    elif len(headers_parts) > 2:
         raise AuthError({
             'code': 'invalid_header',
-            'description': 'Invalid bearer token'
-        }, 401)
+            'description': 'Authorization header must be bearer token.'
+        })
     
-    token = parts[1]
+    token = headers_parts[1]
     return token
 
 '''
@@ -85,7 +83,7 @@ def check_permissions(permission, payload):
             'code': 'unauthorized',
             'description': 'Permission not found.'
         }, 401)
-         
+
     return True
     
     
@@ -166,7 +164,7 @@ def verify_decode_jwt(token):
     return the decorator which passes the decoded payload to the decorated method
 '''
 
-def requires_auth(permission=""):
+def requires_auth(permission=''):
     def requires_auth_decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
@@ -177,7 +175,6 @@ def requires_auth(permission=""):
                 abort(401)
             
             check_permissions(permission, payload)
-            
             return f(payload, *args, **kwargs)
 
         return wrapper

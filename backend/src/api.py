@@ -76,36 +76,36 @@ def get_drinks_detail(payload):
         it should contain the drink.long() data representation
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
         or appropriate status code indicating reason for failure
-'''
-
-@app.route("/drinks", methods=['POST'])
+'''           
+            
+@app.route('/drinks', methods=['POST'])
 @requires_auth('post:drinks')
-def post_drinks(payload):
+def post_drink(payload):
+    # if the method is POST
     if request.method == "POST":
+        # get the data
         body = request.get_json()
-        
+        print(body)
         try:
             #first obtain the recipe and title from the form
             recipe = body['recipe']
-            if isinstance(recipe, dict):
+            if type(recipe) is dict:
                 recipe = [recipe]
-                
+            
             title = body['title']
-            
             #finally create an instance of the drink with the above objects
-            drink = Drink()
-            drink.title = title
             # convert object to a string
-            drink.recipe = json.dumps(recipe)  
+            drink = Drink(title=title, recipe=json.dumps(recipe))
             drink.insert()
-            createdDrink = [drink.long()]
-            
+            drinks = [drink.long()]
+
             return jsonify({
                 'success': True,
-                'drinks': createdDrink
-            }),200        
+                'drinks': drinks
+            })
+            
         except:
-            abort(422)
+            abort
 
 '''
 @TODO implement endpoint

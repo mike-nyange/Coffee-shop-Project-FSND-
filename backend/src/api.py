@@ -44,7 +44,7 @@ def get_drinks():
     return jsonify({
         'success':True,
         'drinks':drinks
-    })
+    }), 200
 
 '''
 @TODO implement endpoint
@@ -55,8 +55,8 @@ def get_drinks():
         or appropriate status code indicating reason for failure
 '''
 
-app.route('/drinks-detail', methods=["GET"])
-#@requires_auth('get:drinks-detail')
+@app.route('/drinks-detail', methods=["GET"])
+@requires_auth('get:drinks-detail')
 def get_drinks_detail(payload):
     if request.method == "GET":
         allDrinks = Drink.query.all()
@@ -78,8 +78,8 @@ def get_drinks_detail(payload):
         or appropriate status code indicating reason for failure
 '''
 
-app.route("/drinks", methods=['POST'])
-requires_auth('post:drinks')
+@app.route("/drinks", methods=['POST'])
+@requires_auth('post:drinks')
 def post_drinks(payload):
     if request.method == "POST":
         body = request.get_json()
@@ -103,8 +103,7 @@ def post_drinks(payload):
             return jsonify({
                 'success': True,
                 'drinks': createdDrink
-            })
-            
+            }),200        
         except:
             abort(422)
 
@@ -120,35 +119,35 @@ def post_drinks(payload):
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks/<int:drink_id>', methods=['PATCH'])
-#@requires_auth('patch:drinks')
+@requires_auth('patch:drinks')
 def patch_drink(payload, drink_id):
     if request.method == "PATCH":
         body = request.get_json()
         #get the drink with the requested Id
-        drink = Drink.query.filter(Drink.id==drink_id).one_ornone()
+        drink = Drink.query.filter(Drink.id==drink_id).one_or_none()
         if not drink:
             abort(404)
-        else:
-            try:
-                title = body.get('title', None)
-                recipe = body.get('recipe', None)
+    
+        try:
+            title = body.get('title', None)
+            recipe = body.get('recipe', None)
+            
+            if title != None:
+                drink.title = title
                 
-                if title != None:
-                    drink.title = title
-                    
-                if recipe != None:
-                    drink.recipe = json.dumps(body['recipe'])
-                
-                drink.update()
-                
-                updatedDrink = [drink.long()]
-                
-                return jsonify({
-                'success': True,
-                'drinks': updatedDrink
-                }), 200
-            except Exception:
-                abort(400)
+            if recipe != None:
+                drink.recipe = json.dumps(body['recipe'])
+            
+            drink.update()
+            
+            updatedDrink = [drink.long()]
+            
+            return jsonify({
+            'success': True,
+            'drinks': updatedDrink
+            }), 200
+        except Exception:
+            abort(422)
                 
 
 '''
@@ -162,7 +161,7 @@ def patch_drink(payload, drink_id):
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks/<int:drink_id>', methods=['DELETE'])
-#@requires_auth('delete:drinks')
+@requires_auth('delete:drinks')
 def delete_drink(payload, drink_id):
     if request.method == "DELETE":
         drink = Drink.query.filter(Drink.id==drink_id).one_or_none()

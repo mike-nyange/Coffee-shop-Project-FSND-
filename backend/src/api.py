@@ -1,7 +1,7 @@
 import os
 from flask import Flask, request, jsonify, abort
 #from sqlalchemy import exc
-#from sqlalchemy import exc 
+from sqlalchemy import exc 
 import json
 from flask_cors import CORS
 
@@ -55,17 +55,17 @@ def get_drinks():
         or appropriate status code indicating reason for failure
 '''
 
-app.route('/drinks-detail', methods=['GET'])
-@requires_auth('get:drinks-detail')
+app.route('/drinks-detail', methods=["GET"])
+#@requires_auth('get:drinks-detail')
 def get_drinks_detail(payload):
     if request.method == "GET":
         allDrinks = Drink.query.all()
-        drinks = [drink.long() for drink in allDrinks]
+        drinks = [drink.short() for drink in allDrinks]
         
         return jsonify({
             'success':True,
             'drinks': drinks
-        }), 200
+        }),200
 
 
 '''
@@ -120,7 +120,7 @@ def post_drinks(payload):
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks/<int:drink_id>', methods=['PATCH'])
-@requires_auth('patch:drinks')
+#@requires_auth('patch:drinks')
 def patch_drink(payload, drink_id):
     if request.method == "PATCH":
         body = request.get_json()
@@ -162,7 +162,7 @@ def patch_drink(payload, drink_id):
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks/<int:drink_id>', methods=['DELETE'])
-@requires_auth('delete:drinks')
+#@requires_auth('delete:drinks')
 def delete_drink(payload, drink_id):
     if request.method == "DELETE":
         drink = Drink.query.filter(Drink.id==drink_id).one_or_none()

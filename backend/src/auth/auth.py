@@ -5,7 +5,7 @@ from jose import jwt
 from urllib.request import urlopen
 
 
-AUTH0_DOMAIN = 'dev-fsddeaee.us.auth0.com'
+AUTH0_DOMAIN = 'dev-xc243wct.us.auth0.com'
 ALGORITHMS = ['RS256']
 API_AUDIENCE = 'http://127.0.0.1:5000/drinks'
 
@@ -73,17 +73,16 @@ def get_token_auth_header():
 '''
 def check_permissions(permission, payload):
     if 'permissions' not in payload:
-        raise AuthError({
-            'code': 'invalid_claims',
-            'description': 'Permissions not included in JWT.'
-        }, 400)
+                        raise AuthError({
+                            'code': 'invalid_claims',
+                            'description': 'Permissions not included in JWT.'
+                        }, 400)
 
     if permission not in payload['permissions']:
         raise AuthError({
             'code': 'unauthorized',
             'description': 'Permission not found.'
-        }, 401)
-
+        }, 403)
     return True
     
     

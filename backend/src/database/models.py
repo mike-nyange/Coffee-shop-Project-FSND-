@@ -48,6 +48,54 @@ Drink
 a persistent drink entity, extends the base SQLAlchemy Model
 '''
 
+class Snack(db.Model):
+    id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
+    snack_name = Column(String(80), unique=True)
+    
+    '''
+    insert()
+        inserts a new model into a database
+        the model must have a unique name
+        the model must have a unique id or null id
+        EXAMPLE
+            drink = Drink(title=req_title, recipe=req_recipe)
+            drink.insert()
+    '''
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    '''
+    delete()
+        deletes a new model into a database
+        the model must exist in the database
+        EXAMPLE
+            drink = Drink(title=req_title, recipe=req_recipe)
+            drink.delete()
+    '''
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    '''
+    update()
+        updates a new model into a database
+        the model must exist in the database
+        EXAMPLE
+            drink = Drink.query.filter(Drink.id == id).one_or_none()
+            drink.title = 'Black Coffee'
+            drink.update()
+    '''
+
+    def update(self):
+        db.session.commit()
+
+    def __repr__(self):
+        return f'self.name'
+
+
 
 class Drink(db.Model):
     # Autoincrementing, unique primary key
